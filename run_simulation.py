@@ -36,5 +36,24 @@ for tick in range(Simulation_Duration):
 
 #We can now analyze the results of the simulation.
 
+time = np.arange(Simulation_Duration)
+plt.figure(figsize=(12, 6))
+plt.subplot(2, 1, 1)
+plt.plot(time, queue_length_history, label='Queue Length', color='blue')
+plt.xlabel('Time (ticks)')
+plt.ylabel('Queue Length')
+plt.title('Queue Length Over Time')
+plt.grid()
+plt.legend()
+plt.subplot(2, 1, 2)
+plt.plot(time, server_busy_history, label='Server Busy', color='red')
+plt.xlabel('Time (ticks)')
+plt.ylabel('Server Busy (1 = Busy, 0 = Idle)')
+plt.title('Server Busy Status Over Time')
+plt.grid()
+plt.legend()
+plt.tight_layout()
+plt.show()
+
 
         
