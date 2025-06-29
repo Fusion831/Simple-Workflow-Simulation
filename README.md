@@ -55,15 +55,13 @@ The simulation framework is designed with a clear separation between the simulat
     pip install numpy matplotlib
     ```
 
-### Execution
-
 To run the simulation, execute the main script from the root directory:
 
 ```bash
 python run_simulation.py
 ```The console will output a prediction of system stability based on queuing theory, followed by the final summary statistics. Matplotlib plots will then be displayed.
 
-## Simulation Analysis: From Instability to Resolution
+# Simulation Analysis: From Instability to Resolution
 
 ### Part I: The Single-Server Bottleneck
 The initial analysis models a system with one server facing a workload it cannot handle. The system's parameters result in a Traffic Intensity (ρ) greater than 1, which theory predicts will lead to instability.
