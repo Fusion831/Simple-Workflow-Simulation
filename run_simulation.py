@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 # Simulation parameters
 Simulation_Duration = 2000
 Arrival_Rate = 0.4
+LAMBDA = 0.4
 
 
 # Initialize the server and the task queue.
@@ -22,7 +23,8 @@ wait_times = []  # This will store the waiting time for each task in the queue.
 #Simulation loop
 for tick in range(Simulation_Duration):
     #We check to see if a new task arrives at the server.
-    if np.random.rand() < Arrival_Rate:
+    num_arrivals = np.random.poisson(LAMBDA)  # Generate a random number of arrivals based on the Poisson distribution.
+    for _ in range(num_arrivals):
         new_task = Task(tick)
         task_queue.append(new_task)
     
