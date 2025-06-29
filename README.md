@@ -55,31 +55,38 @@ The simulation framework is designed with a clear separation between the simulat
     pip install numpy matplotlib
     ```
 
+### Execution
+
 To run the simulation, execute the main script from the root directory:
 
 ```bash
 python run_simulation.py
-```The console will output a prediction of system stability based on queuing theory, followed by the final summary statistics. Matplotlib plots will then be displayed.
+```
 
-# Simulation Analysis: From Instability to Resolution
+The console will output a prediction of system stability based on queuing theory, followed by the final summary statistics. Matplotlib plots will then be displayed.
+
+## Simulation Analysis: From Instability to Resolution
 
 ### Part I: The Single-Server Bottleneck
+
 The initial analysis models a system with one server facing a workload it cannot handle. The system's parameters result in a Traffic Intensity (ρ) greater than 1, which theory predicts will lead to instability.
 
-*   **Traffic Intensity (ρ) = Arrival Rate (λ) \* Average Service Time (T) > 1**
+* **Traffic Intensity (ρ) = Arrival Rate (λ) * Average Service Time (T) > 1**
 
 **Results:**
 
 ![Unstable Single-Server Result](images/mvp_result.png)
 
 **In-depth Analysis:**
-*   **Queue Length (Top Plot):** The plot provides clear visual evidence of the theoretical prediction. The queue length trends relentlessly upwards, indicating the system is accumulating a backlog much faster than it can clear it.
-*   **Server Status (Bottom Plot):** The server's utilization jumps to 100% and stays there, demonstrating it is completely saturated and acting as a critical bottleneck.
+
+* **Queue Length (Top Plot):** The plot provides clear visual evidence of the theoretical prediction. The queue length trends relentlessly upwards, indicating the system is accumulating a backlog much faster than it can clear it.
+* **Server Status (Bottom Plot):** The server's utilization jumps to 100% and stays there, demonstrating it is completely saturated and acting as a critical bottleneck.
 
 ### Part II: Achieving Stability with Parallel Processing
+
 The logical solution to the bottleneck is to add more processing capacity. By introducing a second server, we change the stability equation for the system as a whole.
 
-*   **Multi-Server Traffic Intensity (ρ) = λ / (Number of Servers \* Service Rate) < 1**
+* **Multi-Server Traffic Intensity (ρ) = λ / (Number of Servers * Service Rate) < 1**
 
 With the same arrival rate, the combined service capacity of two servers is now sufficient to handle the load, bringing the traffic intensity below the critical threshold of 1.
 
@@ -88,27 +95,28 @@ With the same arrival rate, the combined service capacity of two servers is now 
 ![Stable Multi-Server Result](images/multiple_servers.png)
 
 **In-depth Analysis:**
-*   **Queue Length (Top Plot):** The queue behavior is now fundamentally different. It is **stable and bounded**. While it experiences occasional spikes, the system has enough throughput to process these tasks and consistently bring the queue length back down.
-*   **Server Status (Bottom Plot):** This plot, showing the number of busy servers, is highly dynamic. The periods where the value is 0 (both servers idle) are crucial—they represent the spare capacity that allows the system to absorb random spikes in demand without becoming unstable.
+
+* **Queue Length (Top Plot):** The queue behavior is now fundamentally different. It is **stable and bounded**. While it experiences occasional spikes, the system has enough throughput to process these tasks and consistently bring the queue length back down.
+* **Server Status (Bottom Plot):** This plot, showing the number of busy servers, is highly dynamic. The periods where the value is 0 (both servers idle) are crucial—they represent the spare capacity that allows the system to absorb random spikes in demand without becoming unstable.
 
 ## Quantitative Findings
 
-| Metric                        | Unstable System (1 Server) | Stable System (2 Servers) |
-| ----------------------------- | -------------------------- | ------------------------- |
-| **System Stability (ρ)**      | Unstable (ρ > 1)           | Stable (ρ < 1)            |
-| **Queue Behavior**            | Unbounded Growth           | Bounded and Stable        |
+| Metric                        | Unstable System (1 Server) | Stable System (2 Servers)   |
+| ----------------------------- | -------------------------- | --------------------------- |
+| **System Stability (ρ)**      | Unstable (ρ > 1)           | Stable (ρ < 1)              |
+| **Queue Behavior**            | Unbounded Growth           | Bounded and Stable          |
 | **Server Pool Utilization**   | ~100%                      | ~80% (Efficiently utilized) |
-| **Average Task Wait Time**    | Very High (and growing)    | Low and manageable        |
+| **Average Task Wait Time**    | Very High (and growing)    | Low and manageable          |
 
 ## Future Enhancements
 
 The current framework provides a robust foundation for discrete-time simulation. The most significant architectural evolution would be to transition to a more advanced simulation paradigm.
 
-*   **Transition to a Discrete-Event Simulation (DES) Model:**
-    *   **Current Model (Discrete-Time):** The simulation advances by a fixed time-step (a "tick"), and the entire system state is checked at every step. This is simple to implement but computationally inefficient, as many ticks may pass where no event occurs.
-    *   **Proposed Model (Discrete-Event):** Instead of a fixed tick, the simulation clock would **jump directly to the time of the next scheduled event**. This requires an "event calendar," typically implemented with a priority queue (`heapq`), which stores future events (e.g., "a task arrival at t=10.3," "server 2 will finish its task at t=12.1").
-    *   **Benefit:** This approach is vastly more efficient for simulations with sparse events or long durations, as it completely skips the "dead time" between events.
+* **Transition to a Discrete-Event Simulation (DES) Model:**
+  * **Current Model (Discrete-Time):** The simulation advances by a fixed time-step (a "tick"), and the entire system state is checked at every step. This is simple to implement but computationally inefficient, as many ticks may pass where no event occurs.
+  * **Proposed Model (Discrete-Event):** Instead of a fixed tick, the simulation clock would **jump directly to the time of the next scheduled event**. This requires an "event calendar," typically implemented with a priority queue (`heapq`), which stores future events (e.g., "a task arrival at t=10.3," "server 2 will finish its task at t=12.1").
+  * **Benefit:** This approach is vastly more efficient for simulations with sparse events or long durations, as it completely skips the "dead time" between events.
 
-*   **Cost-Benefit Analysis:** Introduce a cost model. For example, assign a cost per tick for running a server and a cost per tick for a task waiting in the queue. The simulation could then be used to find the optimal number of servers that minimizes total operational cost.
+* **Cost-Benefit Analysis:** Introduce a cost model. For example, assign a cost per tick for running a server and a cost per tick for a task waiting in the queue. The simulation could then be used to find the optimal number of servers that minimizes total operational cost.
 
-*   **Priority Queues:** Implement a priority system where some tasks are more important than others. This would involve replacing the standard FIFO `deque` with a priority queue (`heapq`) and adding a `priority` attribute to the `Task` class.
+* **Priority Queues:** Implement a priority system where some tasks are more important than others. This would involve replacing the standard FIFO `deque` with a priority queue (`heapq`) and adding a `priority` attribute to the `Task` class.
