@@ -8,7 +8,7 @@ class Server:
     - tick(): calls busy() to check if the server is busy, and if so, decrements the processing time.
              When time reaches zero, the task is completed and the server is no longer busy. 
     """
-    def __init__(self, avg_service_time: float = 3.0):
+    def __init__(self, avg_service_time: float = 2.0):
         """Initialize the task with an exponentially distributed processing time
            and the tick when it was created."""
         self.current_task = None
